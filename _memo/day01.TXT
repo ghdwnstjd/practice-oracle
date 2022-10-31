@@ -1,0 +1,213 @@
+DB(Database)
+	데이터가 모여 있는 기지
+	추상적인 용어
+
+DBMS(Database Management System)
+	DB를 관리할 수 있는 구체적인 시스템
+	오라클, 마리아DB, MySQL, MS-SQL, MongoDB, ...
+
+오라클 DBMS 버전
+	i : internet
+	g : grid
+	c : cloud
+
+오라클 DBMS 설치 - 11G
+
+압축 해제 > DISK1/setup.ext 실행 > Next > I Agree.. 체크 > Next > Next > 비밀번호 1234
+> Next > 정보 확인 후 Intall > Finish
+====================================================================
+계정
+	sys		: 모든 권한을 가지고 있는 최상위 계정(admin)
+	system		: 일반 계정들을 관리하는 계정
+	일반 계정	: 스키마를 관리하는 계정(hr, scott,...)
+
+스키마
+	정리가 잘 되어 있는 표들의 묶음 혹은 상태
+
+일반 계정 접속(hr)
+	cmd 접속 > sqlplus system/1234 > 비밀번호: 1234
+	SQL > show user
+	USER is "SYSTEM"
+	SQL > alter user hr account unlock;
+	SQL > alter user hr identified by hr;
+	SQL > conn hr/hr
+	SQL > show user
+	USER is "HR"
+====================================================================
+IDE 설치 - DBeaver
+   https://dbeaver.io/download/
+   windows 64bit(zip) - 무설치 버전 설치
+   압축 해제 후 DBeaver.exe 실행
+   Sample Database는 만들지 않는다.
+
+New Connection
+   host(서버의 IP주소) : localhost
+   Database : XE
+   username : hr
+   password : hr
+
+Edit Driver Settings
+   Libraries 탭 클릭
+   > 기존에 있는 라이브러리 전체 삭제
+   > Add File
+   > C:\oraclexe\app\oracle\product\11.2.0\server\jdbc\lib\ojdbc6.jar 추가
+   > 확인
+
+Test Connection 클릭 > Connected 성공
+====================================================================
+sdfsdfsdssadasdasadad
+DBMS의 소통방식
+
+---------------------------------------------------------------------------
+			사용자
+---------------------------------------------------------------------------
+	↕				↕
+고객관리 응용 프로그램		주문관리 응용 프로그램
+	↕				↕
+---------------------------------------------------------------------------
+			DBMS
+---------------------------------------------------------------------------
+
+====================================================================
+RDBMS(관계형 데이터베이스 시스템)
+	테이블끼리 서로 관계를 맺는다
+
+
+Table A(User, MyPage, Member)		Table B(Order, Bill)
+
+번호(PK)	이름	나이	아이디(UK)	주문번호(PK)	번호(FK)	날짜		상품수량
+
+1	한동석	20	hds		20220823001	3	2022-08-23	12
+2	황지수	25	hjs		20220823004	4	2022-08-23	2
+3	김지연	29	kjy		20220822041	2	2022-08-22	5
+4	추성윤	33	csy		20220703945	1	2022-07-03	30
+5	손호현	27	shh		20220709123	1	2022-07-09	450
+
+이러한 구조를 가지는 것을 Table, Relation(오라클), Class라고 부른다.
+
+COLUMN(열, 속성, 필드)
+	공통된 값들의 주제, 집합. 
+
+ROW(행, 레코드, 튜플)
+	하나의 정보
+
+PRIMARY KEY(PK)
+	고유한 값.
+	각 행의 구분점으로 사용된다.
+	중복이 없고 NULL값을 허용하지 않는다.
+
+FOREIGN KEY(FK)
+	다른 테이블의 PK
+	보통 테이블끼리 관계를 맺을 때 사용한다.
+	중복도 가능하고, NULL도 가능하다.
+
+UNIQUE KEY(UK)
+	NULL은 허용하지만 중복을 허용하지 않는다.
+
+조합키(복합키)
+	하나의 테이블에 2개 이상 컬럼에 PK를 줄 수 있다.
+	각 컬럼의 데이터는 중복이 허용되지만, 조합 시 중복은 허용하지 않는다.
+	NULL도 허용되지 않는다.
+
+	1	A
+	1	B
+	2	A
+	2	B
+	3	C
+
+====================================================================
+
+컴파일 언어와 스크립트 언어
+
+- 컴파일 언어
+	파일 단위로 해석한다(일괄처리)
+	빈번한 수정 시 비효율적이다.
+
+- 스크립트 언어
+	한 줄 단위로 해석한다(개별처리)
+	빈번한 수정 시 효율적이다.
+
+
+SQL문(쿼리문) - DDL, DML, DCL, TCL
+
+▶ DDL(Data Definition Language)
+	테이블 조작, 제어 관련 쿼리문
+	
+	1. CREATE : 테이블 생성
+		CREATE TABLE [테이블명]([컬럼명][자료형(용량)][제약조건],...);
+	2. DROP : 테이블 삭제
+		DROP TABLE [테이블명]
+
+	3. ALTER : 테이블 수정
+		ALTER TABLE [테이블명]
+
+		- 테이블명 수정
+			RENAME TO [새로운 테이블명]
+		- 컬럼 추가
+			ADD([새로운 컬럼명][자료형(용량)]);
+		- 컬럼명 변경
+			RENAME COLUMN [기존 컬럼명] TO [새로운 컬럼명];
+		- 컬럼 삭제
+			DROP COLUMN [컬럼명];
+		- 컬럼 수정
+			MODIFY([기존 컬럼명][자료형(용량)];
+
+	4. TRUNCATE : 테이블 내용 전체 삭제
+		TRUNCATE TABLE [테이블명];
+
+
+자료형(TYPE) : 용량은 항상 넉넉하게 주도록 한다.
+
+	숫자
+		NUMBER(자릿수) : 정수, 소수점 자릿수는 0으로 설정된다.
+		NUMBER(자릿수, 소수점 자릿수) : 실수
+	문자열
+		CHAR(용량) : 고정형
+			CHAR(4)에 'A'를 넣으면 A^^^ 빈 자리가 공백으로 채워진다.
+			형식을 정한 날짜, 주민등록번호, 사업자 등록번호처럼 글자 수가 절대 변하지 않는 값을 넣는다.
+
+		VARCHAR(용량), VARCHAR2(용량) : 가변형
+			값의 길이만큼 공간이 배정된다. 글자 수에 변화가 있는 값을 넣는다.
+	날짜
+		DATE : FORMAT에 맞춰서 날짜를 저장하는 타입
+
+====================================================================
+
+/* 1. 컬럼추가(성별 추가하기)
+ * 2. 컬럼 이름 수정(ANIMAL_NUMBER를 ANIMAL_ID)
+ * 3. 컬럼 삭제(먹이 삭제)
+ * 4. 컬럼 수정(종류를 NUMBER로 변경)
+ * 5. 동물테이블 삭제
+ * */
+
+ALTER TABLE TBL_ANIMAL ADD(ANIMAL_GENDER CHAR(1));
+ALTER TABLE TBL_ANIMAL RENAME COLUMN ANIMAL_NUMBER TO ANIMAL_ID;
+ALTER TABLE TBL_ANIMAL DROP COLUMN ANIMAL_FEED;
+ALTER TABLE TBL_ANIMAL MODIFY(ANIMAL_KINDS NUMBER);
+DROP TABLE TBL_ANIMAL;
+
+
+/*
+ * 학생 테이블 생성
+ * - 학생 번호
+ * - 학생 아이디
+ * - 학생 이름
+ * - 전공
+ * - 성별
+ * - 생년월일
+ * */
+
+/*컬럼 추가(남친여친 유무 검사)*/
+
+
+CREATE TABLE TBL_STUDENT(
+   STUDENT_NUMBER NUMBER CONSTRAINT PK_STUDENT PRIMARY KEY,
+   STUDENT_ID VARCHAR2(1000) UNIQUE,
+   STUDENT_NAME VARCHAR2(1000),
+   STUDENT_MAJOR VARCHAR2(1000),
+   /*STUDENT_GENDER CHAR(1) DEFAULT 'W' CONSTRAINT BAN_CHAR CHECK(STUDENT_GENDER = 'M' OR STUDENT_GENDER = 'W') NOT NULL,*/
+   STUDENT_GENDER CHAR(1) DEFAULT 'W' CONSTRAINT BAN_CHAR CHECK(STUDENT_GENDER IN('M', 'W')) NOT NULL,
+   STUDENT_BIRTH DATE CONSTRAINT BAN_DATE CHECK(STUDENT_BIRTH >= TO_DATE('1980-01-01', 'YYYY-MM-DD'))
+);
+
+ALTER TABLE TBL_STUDENT ADD(STUDENT_LOVER CHAR(1));
