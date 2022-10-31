@@ -1,0 +1,284 @@
+/*	FLOWER
+	--------------------------------------------------------------------------
+	FLOWER_NAME : VARCHAR2(1000) : PRIMARY KEY
+	FLOWER_COLOR: VARCHAR2(1000) : PRIMARY KEY
+	--------------------------------------------------------------------------
+	FLOWER_PRICE : NUMBER
+	FLOWER_DATE_OF_EXPIRY : DATE
+	FLOWER_STOCK : NUMBER
+
+
+	POT
+	--------------------------------------------------------------------------
+	POT_NUMBER : NUMBER : PRIMARY KEY
+	--------------------------------------------------------------------------
+	POT_COLOR : VARCHAR2(1000)
+	POT_SHAPE : VARCHAR2(1000)
+	POT_STOCK : NUMBER
+	POT_PRICE : NUMBER
+	FLOWER_NAME : VARCHAR2(1000) : FOREIGN KEY
+	FLOWER_COLOR : VARCHAR2(1000) : FOREIGN KEY*/
+
+
+CREATE TABLE TBL_FLOWER(
+	FLOWER_NAME VARCHAR2(1000),
+	FLOWER_COLOR VARCHAR2(1000),
+	FLOWER_PRICE NUMBER,
+	FLOWER_DATE_OF_EXPIRY DATE,
+	FLOWER_STOCK NUMBER,
+	CONSTRAINT FLOWER_PK PRIMARY KEY(FLOWER_NAME, FLOWER_COLOR)
+);
+
+DROP TABLE TBL_FLOWER;
+
+
+CREATE TABLE TBL_POT(
+	POT_NUMBER NUMBER CONSTRAINT PK_POT PRIMARY KEY,
+	POT_COLOR VARCHAR2(1000),
+	POT_SHAPE VARCHAR2(1000),
+	POT_STOCK NUMBER,
+	POT_PRICE NUMBER,
+	FLOWER_NAME VARCHAR2(1000),
+	FLOWER_COLOR VARCHAR2(1000),
+	CONSTRAINT POT_FK FOREIGN KEY(FLOWER_NAME, FLOWER_COLOR)
+	REFERENCES TBL_FLOWER(FLOWER_NAME, FLOWER_COLOR)
+	/*부모테이블에서 DELETE 시, 자식테이블에서 참조중인 데이터까지 삭제 된다.*/
+	ON DELETE CASCADE 
+);
+
+DROP TABLE TBL_POT;
+
+
+
+
+CREATE TABLE TBL_PROTECTOR(
+	PROTECTOR_PHONE_NUMBER VARCHAR2(1000) CONSTRAINT PK_PROTECTOR PRIMARY KEY,
+	PROTECTOR_NAME VARCHAR2(1000),
+	PROTECTOR_ADDRESS VARCHAR2(1000),
+	PROTECTOR_AGE NUMBER
+);
+
+DROP TABLE TBL_PROTECTOR;
+
+CREATE TABLE TBL_PET(
+	PET_PIN_NUMBER NUMBER CONSTRAINT PK_PET PRIMARY KEY,
+	PET_SPECIES VARCHAR2(1000),
+	PET_NAME VARCHAR2(1000),
+	PET_NUMBER NUMBER,
+	PET_AGE NUMBER,
+	PET_DISEASE VARCHAR2(1000),
+	PROTECTOR_PHONE_NUMBER VARCHAR2(1000),
+	CONSTRAINT FK_PET FOREIGN KEY(PROTECTOR_PHONE_NUMBER)
+	REFERENCES TBL_PROTECTOR(PROTECTOR_PHONE_NUMBER)
+	ON DELETE CASCADE
+);
+
+DROP TABLE TBL_PET;
+
+
+
+
+
+
+/*==========================================================================*/
+/*===================================DML====================================*/
+/*==========================================================================*/
+
+/*TML_MEMBER 테이블에 정보 추가*/
+SELECT*FROM TBL_MEMBER;
+
+/*TBL_MEMBER 테이블에 정보 추가*/
+INSERT INTO TBL_MEMBER(MEMBER_NAME, AGE)
+VALUES('홍길동',25);
+
+/*TBL_MEMBER 테이블에 정보 수정*/
+UPDATE TBL_MEMBER 
+SET MEMBER_NAME = '이순신'
+WHERE MEMBER_NAME = '한동석';
+
+/*TBL_MEMBER 테이블에 정보 삭제*/
+DELETE FROM TBL_MEMBER 
+WHERE AGE >= 25;
+
+
+
+/*==========================================================================*/
+
+
+/*TBL_CAR 테이블*/
+SELECT * FROM TBL_CAR;
+
+/*TBL_CAR 테이블에 정보 추가*/
+INSERT INTO TBL_CAR(CAR_NUMBER, CAR_BRAND, CAR_RELEASE_DATE, CAR_COLOR, CAR_PRICE)
+VALUES(0003, '기아', TO_DATE('2016-01-12 16:24:35','YYYY-MM-DD HH24:MI:SS'), 'WHITE', 20000000);
+
+INSERT INTO TBL_CAR(CAR_NUMBER, CAR_BRAND, CAR_RELEASE_DATE, CAR_COLOR, CAR_PRICE)
+VALUES(0002, '현대', TO_DATE('2018-01-15','YYYY-MM-DD'), 'BLACK', 25000000);
+
+
+/*TBL_CAR 테이블에 정보 수정*/
+UPDATE TBL_CAR 
+SET CAR_RELEASE_DATE = TO_DATE('2016-01-13', 'YYYY-MM-DD')
+WHERE CAR_NUMBER = 1;
+
+/*TBL_CAR 테이블에 정보 삭제*/
+DELETE FROM TBL_CAR
+WHERE CAR_RELEASE_DATE > TO_DATE('2018-01-01','YYYY-MM-DD');
+
+
+
+/*==========================================================================*/
+
+
+/*TBL_ANIMAL 테이블*/
+SELECT * FROM TBL_ANIMAL;
+
+/*TBL_ANIMAL 테이블에 정보 추가*/
+INSERT INTO TBL_ANIMAL(ANIMAL_NUMBER, ANIMAL_KINDS, ANIMAL_AGE, ANIMAL_FEED)
+VALUES(1, '육식', 3, '동물');
+
+INSERT INTO TBL_ANIMAL(ANIMAL_NUMBER, ANIMAL_KINDS, ANIMAL_AGE, ANIMAL_FEED)
+VALUES(2, '초식', 2, '당근');
+
+/*TBL_ANIMAL 테이블에 정보 수정*/
+UPDATE TBL_ANIMAL 
+SET ANIMAL_AGE = 5
+WHERE ANIMAL_AGE = 3;
+
+/*TBL_ANIMAL 테이블에 정보 삭제*/
+DELETE FROM TBL_ANIMAL 
+WHERE ANIMAL_KINDS = '초식';
+
+
+
+/*==========================================================================*/
+
+
+
+/*SEQUENCE는 설정한 증감량과 시작값으로 증가하는 값을 관리하는 개체이다.*/
+CREATE SEQUENCE SEQ_STUDENT;
+
+/*TBL_STUDENT 테이블*/
+SELECT * FROM TBL_STUDENT;
+
+/*TBL_STUDENT 테이블 정보 추가*/
+INSERT INTO TBL_STUDENT
+(STUDENT_NUMBER, STUDENT_ID, STUDENT_NAME, STUDENT_MAJOR, STUDENT_BIRTH)
+VALUES(SEQ_STUDENT.NEXTVAL, 'hds', '한동석', '컴퓨터공학', '1980-01-01');
+
+INSERT INTO TBL_STUDENT
+VALUES(SEQ_STUDENT.NEXTVAL, 'hgd', '홍길동', '컴퓨터공학', 'M', '1980-01-01');
+
+
+/*TBL_STUDENT 테이블 정보 수정*/
+UPDATE TBL_STUDENT 
+SET STUDENT_GENDER = 'M'
+WHERE STUDENT_NUMBER = 1;
+
+/*TBL_STUDENT 테이블 정보 삭제*/
+DELETE FROM TBL_STUDENT
+WHERE STUDENT_NUMBER = 1;
+
+
+
+
+/*==========================================================================*/
+
+
+/*관계를 맺고 있는 테이블들의 DML*/
+/*
+ * 부모테이블의 값이 있어야 자식 테이블에서 참조할 수 있다.
+ * 자식에서 참조 중인 부모의 데이터가 있다면, 부모에서 수정 및 삭제가 불가하다.
+ * 만약 자식 테이블 생성 시 FK 제약조건에 ON DELETE CASCADE옵션을 작성해주면
+ * 부모 데이터 삭제 시, 참조 중인 자식 데이터들이 자동으로 같이 삭제된다.
+ * */
+SELECT * FROM TBL_FLOWER;
+SELECT * FROM TBL_POT;
+
+INSERT INTO TBL_FLOWER
+VALUES('장미', '흰색', 9000, SYSDATE + 2, 10);
+
+CREATE SEQUENCE SEQ_POT;
+
+INSERT INTO TBL_POT
+VALUES(SEQ_POT.NEXTVAL, 'BLACK', 'PALM', 2, 22000, '장미', '빨간색');
+
+UPDATE TBL_FLOWER  
+SET FLOWER_NAME = '라벤더', FLOWER_COLOR = '빨간색'
+WHERE FLOWER_NAME = '장미' AND FLOWER_COLOR ='흰색';
+
+DELETE FROM TBL_FLOWER
+WHERE FLOWER_NAME ='장미';
+
+
+
+/*
+ * TBL_PROTECTOR, TBL_PET
+ * 
+ * 보호자 정보 추가
+ * 반려동물 정보 추가
+ * 보호자 이름 수정
+ * 반려동물의 보호자 번호 수정
+ * 보호자 삭제
+ * 보호자가 없는 반려동물 추가
+ * 
+ * */
+
+SELECT * FROM TBL_PROTECTOR;
+SELECT * FROM TBL_PET;
+
+
+/*보호자 정보 추가*/
+INSERT INTO TBL_PROTECTOR
+VALUES('01083942024', '하정윤', '서울시 중랑구', 26);
+
+/*시퀀스 생성*/
+CREATE SEQUENCE SEQ_PET;
+
+/*반려동물 정보 추가*/
+INSERT INTO TBL_PET
+VALUES(SEQ_PET.NEXTVAL, '개', '강철이', 1, 3, '감기', '01020491601'); 
+
+INSERT INTO TBL_PET
+VALUES(SEQ_PET.NEXTVAL, '고양이', '똘이', 2, 5, '오한', '01083942024'); 
+
+/*보호자 이름 수정*/
+UPDATE TBL_PROTECTOR 
+SET PROTECTOR_NAME = '준성이'
+WHERE PROTECTOR_PHONE_NUMBER = '01020491601';
+
+/*반려동물의 보호자 번호 수정
+ * ※ 부모에 없는 값으로 수정할 수 없다.
+ * 	 부모 테이블에 수정할 새로운 정보를 추가한 뒤
+ * 	 해당 PK로 수정이 가능하다.
+ * */
+UPDATE TBL_PET 
+SET PROTECTOR_PHONE_NUMBER = '01083942024'
+WHERE PROTECTOR_PHONE_NUMBER = '01020491601';
+
+/*보호자 삭제
+ * 자식테이블도 함께 삭제되게 하기 위해 TBL_PET의 FOREIGN KEY CONSTRAINT에 
+ * ON DELETE CASCADE 추가함
+ * */
+DELETE FROM TBL_PROTECTOR
+WHERE PROTECTOR_PHONE_NUMBER = '01083942024';
+
+/*이미 테이블이 만들어져 있다면, 제약조건만 없애고 다시 제약조건을 설정한다.*/
+ALTER TABLE TBL_PET ADD CONSTRAINT FK_PET FOREIGN KEY(OWNER_PHONE_NUMBER)
+REFERENCES TBL_OWNER(OWNER_PHONE_NUMBER)
+ON DELETE CASCADE;
+
+/*보호자가 없는 반려동물 추가*/
+/*나중에 null값을 추출할 경우(제약조건으로 삼을 경우) is null 을 사용한다.*/
+INSERT INTO TBL_PET
+VALUES(SEQ_PET.NEXTVAL, '소', '솔솔이', 3, 6, '허리디스크', null);
+
+/*보호자의 핸드폰 번호가 null인 것만 추출*/
+SELECT * FROM TBL_PET
+WHERE PROTECTOR_PHONE_NUMBER IS NULL;
+
+
+
+
+
+
